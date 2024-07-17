@@ -1,11 +1,8 @@
-DORADO = "~/apps/dorado-0.7.2-linux-x64/bin/dorado"
-
-
 rule download_dorado_model:
     output:
         directory("dorado_models/{model}"),
     params:
-        dorado_bin=DORADO,
+        dorado_bin=config["dorado_bin"],
     shell:
         """
         {params.dorado_bin} download --model {wildcards.model} --directory dorado_models
@@ -20,7 +17,7 @@ rule basecall:
         bam="basecalled/{run_id}/basecalled.bam",
     params:
         kit=config["kit"],
-        dorado_bin=DORADO,
+        dorado_bin=config["dorado_bin"],
     shell:
         """
         {params.dorado_bin} basecaller {input.mdl} {input.rds} --kit-name {params.kit} > {output}
@@ -33,7 +30,7 @@ rule demux:
     output:
         directory("basecalled/{run_id}/barcodes"),
     params:
-        dorado_bin=DORADO,
+        dorado_bin=config["dorado_bin"],
     shell:
         """
         {params.dorado_bin} demux {input.bam} --no-classify --output-dir {output}

@@ -1,3 +1,4 @@
 /.snakemake
 /dorado_models
+/dorado_models.yml
 /nanopore_runs/example_run/pod5
