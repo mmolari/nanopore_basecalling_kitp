@@ -1,0 +1,2 @@
+executor: slurm
+latency-wait: 60
