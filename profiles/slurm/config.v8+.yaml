@@ -16,5 +16,6 @@ set-resources:
     threads: 32
     mem_mb: 10000
     slurm_partition: "a100"
-    slurm_extra: "'--nodes=1 --gres=gpu:4 --qos=gpu6hours'"
+    nodes: 1
+    slurm_extra: "'--qos=gpu6hours --gres=gpu:2'"
     runtime: 5h
