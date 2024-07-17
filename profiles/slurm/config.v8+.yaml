@@ -1,0 +1,20 @@
+cores: 1
+use-conda: true
+conda-frontend: mamba
+executor: "slurm"
+latency-wait: 60
+jobs: 20
+
+default-resources:
+  mem_mb: 3000
+  threads: 1
+  slurm_extra: "'--qos=30min'"
+  runtime: 29m
+
+set-resources:
+  basecall:
+  threads: 32
+  mem_mb: 10000
+  slurm_partition: "a100"
+  slurm_extra: "'--nodes=1 --gres=gpu:4 --qos=gpu6hours'"
+  runtime: 5h
