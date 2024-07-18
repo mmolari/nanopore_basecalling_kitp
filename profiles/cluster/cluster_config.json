@@ -1,16 +1,14 @@
 {
     "__default__": {
         "time": "00:29:00",
-        "qos": "30min",
         "cpus": 1,
         "mem": "4G",
-        "extra": ""
+        "extra": "--partition=short --nodes=1"
     },
     "basecall": {
         "time": "05:55:00",
-        "qos": "gpu6hours",
-        "mem": "100G",
-        "cpus": 32,
-        "extra": "--partition=a100 --nodes=1 --gres=gpu:4"
+        "mem": "10G",
+        "cpus": 6,
+        "extra": "--partition=gpu --nodes=1"
     }
 }
