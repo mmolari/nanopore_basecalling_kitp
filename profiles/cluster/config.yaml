@@ -1,4 +1,4 @@
-cluster: "sbatch --time={cluster.time} --mem={cluster.mem} --cpus-per-task={cluster.cpus} --qos={cluster.qos} {cluster.extra}"
+cluster: "sbatch --time={cluster.time} --mem={cluster.mem} --cpus-per-task={cluster.cpus} {cluster.extra}"
 jobs: 25
 jobscript: "profiles/cluster/slurm_submit.sh"
 cluster-config: "profiles/cluster/cluster_config.json"
