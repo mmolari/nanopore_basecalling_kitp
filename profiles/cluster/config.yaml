@@ -6,8 +6,6 @@ cluster-cancel: scancel
 jobname: "{rulename}_{jobid}"
 latency-wait: 90
 
-use-conda: True
 rerun-incomplete: True
-conda-frontend: "mamba"
 printshellcmds: False
 keep-going: False
