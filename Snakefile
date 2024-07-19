@@ -18,7 +18,7 @@ rule download_dorado_model:
 
 rule basecall:
     input:
-        rds=directory("nanopore_runs/{run_id}/pod5"),
+        rds="nanopore_runs/{run_id}/pod5",
         mdl=expand(rules.download_dorado_model.output, model=config["dorado_model"]),
     output:
         bam="basecalled/{run_id}/basecalled.bam",
@@ -46,7 +46,7 @@ rule demux:
 
 rule summary:
     input:
-        bam=rules.basecall.output,
+        bam=rules.basecall.output.bam,
     output:
         "basecalled/{run_id}/summary.tsv",
     params:
@@ -60,6 +60,7 @@ rule summary:
 rule all:
     input:
         expand(rules.demux.output, run_id=config["run_id"]),
+        expand(rules.summary.output, run_id=config["run_id"]),
 
 
 rule clear:
