@@ -1,3 +1,10 @@
+import pathlib
+
+# create log directory
+log_fld = pathlib.Path("log")
+log_fld.mkdir(exist_ok=True)
+
+
 rule download_dorado_model:
     output:
         directory("dorado_models/{model}"),
@@ -40,6 +47,13 @@ rule demux:
 rule all:
     input:
         expand(rules.demux.output, run_id=config["run_id"]),
+
+
+rule clear:
+    shell:
+        """
+        rm log/*
+        """
 
 
 localrules:
