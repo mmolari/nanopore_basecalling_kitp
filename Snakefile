@@ -63,12 +63,5 @@ rule all:
         expand(rules.summary.output, run_id=config["run_id"]),
 
 
-rule clear:
-    shell:
-        """
-        rm log/*
-        """
-
-
 localrules:
     download_dorado_model,
