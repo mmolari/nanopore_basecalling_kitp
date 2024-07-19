@@ -55,6 +55,27 @@ rule to_fastq:
         """
 
 
+rule config_info:
+    output:
+        "basecalled/{run_id}/run_info.txt",
+    params:
+        dorado_bin=config["dorado_bin"],
+    shell:
+        """
+        echo '{config}' > {output}
+        sed -i 's/, /\\n/g' {output}
+        # log git commit
+        echo 'git commit: ' >> {output}
+        git rev-parse HEAD >> {output}
+        # log dorado version
+        echo 'dorado version: ' >> {output}
+        {params.dorado_bin} --version >> {output}
+        # log samtools version
+        echo 'samtools version: ' >> {output}
+        samtools --version >> {output}
+        """
+
+
 rule summary:
     input:
         bam=rules.basecall.output.bam,

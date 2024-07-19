@@ -2,4 +2,7 @@
 /dorado_models
 /dorado_models.yml
 /nanopore_runs/example_run/pod5
+!/nanopore_runs/example_run
+/nanopore_runs
 /basecalled
+/log
