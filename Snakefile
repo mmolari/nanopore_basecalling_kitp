@@ -44,6 +44,19 @@ rule demux:
         """
 
 
+rule summary:
+    input:
+        bam=rules.basecall.output,
+    output:
+        "basecalled/{run_id}/summary.tsv",
+    params:
+        dorado_bin=config["dorado_bin"],
+    shell:
+        """
+        {params.dorado_bin} summary {input.bam} > {output}
+        """
+
+
 rule all:
     input:
         expand(rules.demux.output, run_id=config["run_id"]),
