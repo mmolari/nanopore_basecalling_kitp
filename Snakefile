@@ -72,6 +72,8 @@ def all_fastq(wildcards):
     all_barcodes = pathlib.Path(
         checkpoints.demux.get(run_id=config["run_id"]).output["bcd"]
     ).glob("*.bam")
+    # strip the suffix
+    all_barcodes = [x.stem for x in all_barcodes]
     return expand(rules.to_fastq.output, barcode=all_barcodes, run_id=config["run_id"])
 
 
