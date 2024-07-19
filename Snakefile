@@ -31,16 +31,27 @@ rule basecall:
         """
 
 
-rule demux:
+checkpoint demux:
     input:
         bam=rules.basecall.output,
     output:
-        directory("basecalled/{run_id}/barcodes"),
+        bcd=directory("basecalled/{run_id}/barcodes_bam"),
     params:
         dorado_bin=config["dorado_bin"],
     shell:
         """
         {params.dorado_bin} demux {input.bam} --no-classify --output-dir {output}
+        """
+
+
+rule to_fastq:
+    input:
+        "basecalled/{run_id}/barcodes_bam/{barcode}.bam",
+    output:
+        "basecalled/{run_id}/barcodes_fastq/{barcode}.fastq",
+    shell:
+        """
+        samtools fastq {input} > {output}
         """
 
 
@@ -57,10 +68,16 @@ rule summary:
         """
 
 
+def all_fastq(wildcards):
+    bc_dir = checkpoints.demux.get(**wildcards).output["bcd"]
+    return expand(to_fastq.output, barcode=pathlib.Path(bc_dir).glob("*.bam"))
+
+
 rule all:
     input:
         expand(rules.demux.output, run_id=config["run_id"]),
         expand(rules.summary.output, run_id=config["run_id"]),
+        all_fastq,
 
 
 localrules:

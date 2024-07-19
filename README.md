@@ -8,9 +8,9 @@ This repositoray contains code for the nanopore basecalling of data collected du
 ## setup
 
 - download [dorado](https://github.com/nanoporetech/dorado) binaries, and in the snakefile set `DORADO` equal to the binary path.
-- create an environment with [snakemake](https://snakemake.readthedocs.io/en/stable/) v.7 and the [slurm plugin](https://snakemake.github.io/snakemake-plugin-catalog/plugins/executor/slurm.html).
+- create an environment with [snakemake](https://snakemake.readthedocs.io/en/stable/) v.7 and samtools.
     ```sh
-    conda create -n snakemake -c conda-forge -c bioconda snakemake=7
+    conda create -n snakemake -c conda-forge -c bioconda snakemake=7 samtools
     ```
 
 ## data preparation
@@ -27,3 +27,7 @@ snakemake all \
     --profile profiles/cluster \
     --configfile nanopore_runs/<run-id>/run_config.yml
 ```
+
+## output
+
+basecalled reads will be saved in the `basecalled/<run-id>/` folder.
