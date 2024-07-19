@@ -102,6 +102,7 @@ rule all:
     input:
         expand(rules.demux.output, run_id=config["run_id"]),
         expand(rules.summary.output, run_id=config["run_id"]),
+        expand(rules.config_info.output, run_id=config["run_id"]),
         all_fastq,
 
 
