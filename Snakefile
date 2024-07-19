@@ -69,8 +69,10 @@ rule summary:
 
 
 def all_fastq(wildcards):
-    bc_dir = checkpoints.demux.get(**wildcards).output["bcd"]
-    return expand(to_fastq.output, barcode=pathlib.Path(bc_dir).glob("*.bam"))
+    all_barcodes = pathlib.Path(
+        checkpoints.demux.get(run_id=config["run_id"]).output["bcd"]
+    ).glob("*.bam")
+    return expand(rules.to_fastq.output, barcode=all_barcodes, run_id=config["run_id"])
 
 
 rule all:
