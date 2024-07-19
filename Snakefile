@@ -62,17 +62,17 @@ rule config_info:
         dorado_bin=config["dorado_bin"],
     shell:
         """
-        echo '{config}' > {output}
+        echo "{config}" > {output}
         sed -i 's/, /\\n/g' {output}
         # log git commit
         echo 'git commit: ' >> {output}
         git rev-parse HEAD >> {output}
         # log dorado version
         echo 'dorado version: ' >> {output}
-        {params.dorado_bin} --version >> {output}
+        {params.dorado_bin} --version 2>> {output}
         # log samtools version
         echo 'samtools version: ' >> {output}
-        samtools --version >> {output}
+        samtools --version | head -n1 >> {output}
         """
 
 
