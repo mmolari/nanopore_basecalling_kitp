@@ -48,10 +48,10 @@ rule to_fastq:
     input:
         "basecalled/{run_id}/barcodes_bam/{barcode}.bam",
     output:
-        "basecalled/{run_id}/barcodes_fastq/{barcode}.fastq",
+        "basecalled/{run_id}/barcodes_fastq/{barcode}.fastq.gz",
     shell:
         """
-        samtools fastq {input} > {output}
+        samtools fastq {input} | gzip > {output}
         """
 
 
