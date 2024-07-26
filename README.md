@@ -10,7 +10,7 @@ This repositoray contains code for the nanopore basecalling of data collected du
 - download [dorado](https://github.com/nanoporetech/dorado) binaries, and in the snakefile set `DORADO` equal to the binary path.
 - create an environment with [snakemake](https://snakemake.readthedocs.io/en/stable/) v.7 and samtools.
     ```sh
-    conda create -n snakemake -c conda-forge -c bioconda snakemake=7 samtools
+    conda create -n snakemake_7 -c conda-forge -c bioconda snakemake=7 samtools
     ```
 
 ## data preparation
@@ -23,6 +23,7 @@ This repositoray contains code for the nanopore basecalling of data collected du
 after activating the conda environment, run the sequencing with the command
 
 ```sh
+conda activate snakemake_7
 snakemake all \
     --profile profiles/cluster \
     --configfile nanopore_runs/<run-id>/run_config.yml
