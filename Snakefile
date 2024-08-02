@@ -104,27 +104,26 @@ rule summary:
 
 
 def all_fastq(wildcards):
-    all_barcodes = pathlib.Path(
-        checkpoints.demux.get(run_id=config["run_id"]).output["bcd"]
-    ).glob("*.bam")
-    # strip the suffix
-    all_barcodes = [x.stem for x in all_barcodes]
-    return expand(rules.to_fastq.output, barcode=all_barcodes, run_id=config["run_id"])
+    if kit in no_barcoding_kits:
+        # return without demultiplexing
+        return expand(rules.to_fastq_no_barcoding.output, run_id=config["run_id"])
+    else:
+        # return with multiplexing
+        all_barcodes = pathlib.Path(
+            checkpoints.demux.get(run_id=config["run_id"]).output["bcd"]
+        ).glob("*.bam")
+        # strip the suffix
+        all_barcodes = [x.stem for x in all_barcodes]
+        return expand(
+            rules.to_fastq.output, barcode=all_barcodes, run_id=config["run_id"]
+        )
 
 
 rule all:
     input:
-        expand(rules.demux.output, run_id=config["run_id"]),
         expand(rules.summary.output, run_id=config["run_id"]),
         expand(rules.config_info.output, run_id=config["run_id"]),
         all_fastq,
-
-
-rule all_no_barcode:
-    input:
-        expand(rules.to_fastq_no_barcoding.output, run_id=config["run_id"]),
-        expand(rules.summary.output, run_id=config["run_id"]),
-        expand(rules.config_info.output, run_id=config["run_id"]),
 
 
 localrules:
