@@ -4,6 +4,9 @@ import pathlib
 log_fld = pathlib.Path("log")
 log_fld.mkdir(exist_ok=True)
 
+kit = config["kit"]
+no_barcoding_kits = ["SQK-LSK114"]
+
 
 rule download_dorado_model:
     output:
@@ -23,11 +26,11 @@ rule basecall:
     output:
         bam="basecalled/{run_id}/basecalled.bam",
     params:
-        kit=config["kit"],
+        kit=lambda w: "" if kit in no_barcoding_kits else f"--kit-name {kit}",
         dorado_bin=config["dorado_bin"],
     shell:
         """
-        {params.dorado_bin} basecaller {input.mdl} {input.rds} --kit-name {params.kit} > {output}
+        {params.dorado_bin} basecaller {input.mdl} {input.rds} {params.kit} > {output}
         """
 
 
@@ -49,6 +52,17 @@ rule to_fastq:
         "basecalled/{run_id}/barcodes_bam/{barcode}.bam",
     output:
         "basecalled/{run_id}/barcodes_fastq/{barcode}.fastq.gz",
+    shell:
+        """
+        samtools fastq {input} | gzip > {output}
+        """
+
+
+rule to_fastq_no_barcoding:
+    input:
+        rules.basecall.output.bam,
+    output:
+        "basecalled/{run_id}/basecalled.fastq.gz",
     shell:
         """
         samtools fastq {input} | gzip > {output}
@@ -104,6 +118,13 @@ rule all:
         expand(rules.summary.output, run_id=config["run_id"]),
         expand(rules.config_info.output, run_id=config["run_id"]),
         all_fastq,
+
+
+rule all_no_barcode:
+    input:
+        expand(rules.to_fastq_no_barcoding.output, run_id=config["run_id"]),
+        expand(rules.summary.output, run_id=config["run_id"]),
+        expand(rules.config_info.output, run_id=config["run_id"]),
 
 
 localrules:
