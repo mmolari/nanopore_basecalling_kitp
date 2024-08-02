@@ -7,7 +7,7 @@
     },
     "basecall": {
         "time": "05:55:00",
-        "mem": "10G",
+        "mem": "20G",
         "cpus": 6,
         "extra": "--partition=gpu --nodes=1"
     }
