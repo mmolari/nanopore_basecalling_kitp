@@ -1,12 +1,12 @@
 {
     "__default__": {
-        "time": "04:00:00",
+        "time": "05:00:00",
         "cpus": 1,
         "mem": "4G",
         "extra": "--partition=batch --nodes=1"
     },
     "basecall": {
-        "time": "05:55:00",
+        "time": "12:00:00",
         "mem": "20G",
         "cpus": 6,
         "extra": "--partition=gpu --nodes=1"
