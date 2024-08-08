@@ -10,9 +10,14 @@ no_barcoding_kits = ["SQK-LSK114"]
 
 # pod5 files numbers:
 pod5_fld = "nanopore_runs/" + config["run_id"] + "/pod5"
-pod5_ids = glob_wildcards(nanopore_run_fld + "/{sample}.pod5").sample
+pod5_ids = glob_wildcards(pod5_fld + "/{sample}.pod5").sample
 batch_size = 10
 N_batches = int(np.ceil(len(pod5_ids) / batch_size))
+
+print(f"pod5 folder: {pod5_fld}")
+print(f"samples: {pod5_ids}")
+print(f"batch size: {batch_size}")
+print(f"N batches: {N_batches}")
 
 
 rule download_dorado_model:
@@ -42,7 +47,7 @@ rule create_batch:
         mkdir -p {output}
         # create symlinks
         for f in {input}; do
-            ln -s $f {output}
+            ln -s ../../pod5/$(basename $f) {output}
         done
         """
 
@@ -75,16 +80,6 @@ checkpoint demux:
         """
 
 
-# def all_bam_per_barcode(wildcards):
-#     files = []
-#     for n in range(N_batches):
-#         bam = pathlib.Path(
-#             checkpoints.demux.get(run_id=config["run_id"], n=n).output["bcd"]
-#         ).glob(f"{wildcards.barcode}.bam")
-#         files.extend(bam)
-#     return files
-
-
 rule to_fastq:
     input:
         "basecalled/{run_id}/barcodes_bam/batch_{n}/{barcode}.bam",
@@ -98,6 +93,12 @@ rule to_fastq:
 
 def all_barcode_fastq(wildcards):
     files = []
+
+    exec_all = checkpoints.demux.get(
+        run_id=config["run_id"], n=range(N_batches)
+    ).output["bcd"]
+    print("all barcodes fastq: ", exec_all)
+
     for n_batch in range(N_batches):
         # is barcode in batch output?
         if (
@@ -193,7 +194,7 @@ def all_fastq(wildcards):
     else:
         all_barcodes = []
         for n_batch in range(N_batches):
-            B = Pathlib.Path(
+            B = pathlib.Path(
                 checkpoints.demux.get(run_id=config["run_id"], n=n_batch).output["bcd"]
             ).glob("*.bam")
             all_barcodes.extend([x.stem for x in B])

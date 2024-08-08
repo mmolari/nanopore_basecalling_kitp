@@ -6,9 +6,9 @@
         "extra": "--partition=batch --nodes=1"
     },
     "basecall": {
-        "time": "12:00:00",
+        "time": "6:00:00",
         "mem": "20G",
-        "cpus": 6,
+        "cpus": 4,
         "extra": "--partition=gpu --nodes=1"
     }
 }
