@@ -214,3 +214,4 @@ rule all:
 
 localrules:
     download_dorado_model,
+    create_batch,
