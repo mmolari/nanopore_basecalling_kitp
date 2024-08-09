@@ -80,50 +80,39 @@ checkpoint demux:
         """
 
 
-rule to_fastq:
-    input:
-        "basecalled/{run_id}/barcodes_bam/batch_{n}/{barcode}.bam",
-    output:
-        "basecalled/{run_id}/barcodes_fastq/batch_{n}/{barcode}.fastq.gz",
-    shell:
-        """
-        samtools fastq {input} | gzip > {output}
-        """
-
-
-def all_barcode_fastq(wildcards):
+def all_barcodes_bam(wildcards):
     files = []
-
-    exec_all = checkpoints.demux.get(
-        run_id=config["run_id"], n=range(N_batches)
-    ).output["bcd"]
-    print("all barcodes fastq: ", exec_all)
-
     for n_batch in range(N_batches):
         # is barcode in batch output?
-        if (
-            pathlib.Path(
-                checkpoints.demux.get(run_id=config["run_id"], n=n_batch).output["bcd"]
+        batch_bam_fld = pathlib.Path(
+            checkpoints.demux.get(run_id=config["run_id"], n=n_batch).output["bcd"]
+        )
+        batch_bam_file = batch_bam_fld / f"{wildcards.barcode}.bam"
+        print("batch bam fld:", batch_bam_fld)
+        print("batch bam file:", batch_bam_file)
+        print("exists:", batch_bam_file.exists())
+
+        if (batch_bam_fld / f"{wildcards.barcode}.bam").exists():
+            files += expand(
+                "basecalled/{run_id}/barcodes_bam/batch_{n}/{barcode}.bam",
+                barcode=wildcards.barcode,
+                run_id=config["run_id"],
+                n=n_batch,
             )
-            .joinpath(f"{wildcards.barcode}.bam")
-            .exists()
-        ):
-            files.append(
-                rules.to_fastq.output(
-                    barcode=wildcards.barcode, run_id=config["run_id"], n=n_batch
-                )
-            )
+    print(f"requested files for {wildcards.barcode}:\n", files)
     return files
 
 
 rule collect_fastq:
     input:
-        all_barcode_fastq,
+        all_barcodes_bam,
     output:
         "basecalled/{run_id}/reads/{barcode}.fastq.gz",
     shell:
         """
-        cat {input} > {output}
+        for f in {input}; do
+            samtools fastq $f | gzip >> {output}
+        done
         """
 
 
